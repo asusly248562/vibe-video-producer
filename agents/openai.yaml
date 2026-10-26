@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vibe 知识大赏制作"
+  short_description: "从知识核对、音乐卡点到成片、双尺寸封面与发布文案的完整制作流程"
+  default_prompt: "使用 $vibe-video-producer，根据我的主题和音乐制作 Vibe 知识大赏视频，交付成片、4:3与3:4封面及发布文案。"
