@@ -1,6 +1,8 @@
 ---
 name: vibe-video-producer
 description: 制作或修改中文 Vibe 知识大赏科普短视频，统筹事实核对、短字幕分镜、音乐卡点、本地渲染、双尺寸封面和发布文案；适用于从主题与音乐制作整套内容，或继续修改已有 Vibe 视频项目。
+metadata:
+  version: "0.2.0"
 ---
 
 # Vibe 知识大赏制作
@@ -21,7 +23,7 @@ description: 制作或修改中文 Vibe 知识大赏科普短视频，统筹事�
 
 ## 接手任务
 
-先检查当前项目已有的project.json、分镜、预览、成片及用户已确认意见。不要重新制作已经完成的部分。主题、音乐、规格或授权在对话里已明确时，不重复询问。只在缺失输入确实影响工作时提问，并先推进不依赖回答的部分。
+先检查当前项目已有的project.json、分镜、预览、成片及用户已确认意见。已有项目先用 `project_state.py status` 查看缺项与失效的检查记录，再继续未完成部分。不要重新制作已经完成的部分。主题、音乐、规格或授权在对话里已明确时，不重复询问。只在缺失输入确实影响工作时提问，并先推进不依赖回答的部分。
 
 最小输入是主题；音乐可在后续补充。没有音乐时先做文案与分镜，不捏造音乐路径或宣称完成卡点。用户说“按你的理解”时，用默认偏好自主完成常规选择。预览确认与本地导出的既有授权持续有效；已授权的渲染、修复和重试无需反复确认。若用户只要预览则停在预览阶段；若当前尚未授权最终导出，提供可审阅版本后只确认一次。此流程不包含自动发布到平台。
 
@@ -35,6 +37,16 @@ description: 制作或修改中文 Vibe 知识大赏科普短视频，统筹事�
 6. **检查并完成渲染。** 运行引擎校验，检查每镜、大字边界、随机跳播、关键拍点前后帧，再按已有授权本地导出。用 `scripts/audit_render.py` 检查实际成片的规格、帧数、完整解码和音轨偏移；另外逐帧检查所有切镜及关键动效，脚本解码通过不能代替画面检查。发现问题修复后只重跑受影响检查与最终成片验证。详情见时序参考。
 7. **封面与发布素材。** 读取 [references/visual-and-delivery.md](references/visual-and-delivery.md)。使用 imagegen 或已有明确的封面模板生成4:3、3:4两种独立构图，核对汉字、公式、箭头、边距与实际像素比例。生成与成片一致的标题、简介和少量相关话题。
 8. **交付。** 确认实际文件存在后给出MP4、双封面、发布文案和项目目录。说明时长与规格、重要限制即可。没有成功导出时明确说“预览/源码已完成”，不能称成片完成。保留project.json、sources.md、storyboard.json、beat-map.json、验证结果及源码，便于后续继续修改。
+
+## 断点续做与验收
+
+完成一个文件后用 `project_state.py record` 登记其相对路径与SHA-256。最终用 `status --scope full --require-ready` 检查完整交付；双封面用 `--scope covers`，只要一张用 `--scope cover-4x3` 或 `cover-3x4`；只要标题简介用 `--scope copy`，只交视频用 `--scope video`。具体登记方法与验收证据格式见 [references/project-state.md](references/project-state.md)。
+
+- 文件存在不代表合格。MP4需要实际渲染报告和逐帧视觉复核，封面需要实际比例正确，发布文案需要与知识内容一致。
+- 报告绑定当前成片、时间表和配乐指纹。修改这些文件后，旧报告不能继续通过验收；不要只重新登记文件来绕过检查。
+- 视觉报告必须来自实际检查，覆盖全部切镜/关键词/公式事件帧，并核对手机字幕与事实；没有检查不能先填passed。状态脚本核对证据一致性，不替代视觉判断，也不产生用户授权。
+- 登记机制只跟踪已登记文件。修改未登记的CSS/JS、插图或素材后，仍须更新工程、重新导出并重做受影响检查，不能仅凭旧的ready状态交付。
+- 中断或失败时保留工程和已完成素材，写明当前阶段、缺失项与具体阻碍。跟进请求优先修改对应部分，不重问已回答的问题。
 
 ## 组合其他技能
 
@@ -55,6 +67,8 @@ python scripts/create_project.py --workspace <工作区> --slug <主题短名> -
 python scripts/beat_plan.py analyze --music <音乐> --out <拍点JSON> --offset 0 --seconds 50 --ffmpeg <ffmpeg路径>
 python scripts/beat_plan.py plan --grid <拍点JSON> --story <分镜JSON> --out <beat-map.json>
 python scripts/audit_render.py --video <MP4> --plan <beat-map.json> --score <最终配乐文件可选> --out <audit.json>
+python scripts/project_state.py record --project <项目目录> --kind video --path final/video.mp4
+python scripts/project_state.py status --project <项目目录> --scope full --require-ready
 ```
 
 分镜输入格式、人工修正拍点和渲染精度见时序参考。目录模板、封面和文案验收见视觉与交付参考。脚本输出数值是检查证据，不是美术或科学正确性的自动保证。
