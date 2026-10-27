@@ -1,5 +1,7 @@
 # Vibe 知识大赏制作 Skill
 
+当前版本：**0.2.0**。
+
 把知识主题与背景音乐整理成中文科普短视频，并交付封面和发布文案。适用于支持本地 Agent Skills 的 Codex 工作环境。
 
 默认制作偏好：横屏16:9、1920×1080、30fps，大字短字幕，无额外配音，依据音乐实际节拍剪辑。完整交付包括MP4、4:3横封面、3:4竖封面、标题、简介与话题，以及可继续编辑的源码。
@@ -46,9 +48,27 @@ python scripts/audit_render.py --video <MP4路径> --plan <beat-map.json> --scor
 - `create_project.py`：建立独立项目、复制输入音乐并保存偏好，避免覆盖同名项目。
 - `beat_plan.py`：估计拍点，将分镜拍数、公式出现和数值变化等事件统一映射到视频帧。支持手动指定BPM与首拍。
 - `audit_render.py`：检查最终MP4的规格、帧数、完整解码和可选音轨同步，不能替代人工画面检查。
+- `project_state.py`：登记交付物的文件指纹，检查缺项、文件修改与旧报告失效；支持完整制作、仅视频、双封面、单封面与仅文案的验收范围。
 - `assets/hyperframes-clock.js`：可复用的GSAP时间线时钟，处理六位小数边界误差和屏蔽回调时的绘制。
 
-详细说明见 [SKILL.md](SKILL.md)、[时序与渲染](references/timing-and-render.md) 和 [视觉与交付](references/visual-and-delivery.md)。
+详细说明见 [SKILL.md](SKILL.md)、[时序与渲染](references/timing-and-render.md)、[视觉与交付](references/visual-and-delivery.md) 和 [断点续做与验收](references/project-state.md)。
+
+## 断点续做
+
+```text
+python scripts/project_state.py record --project <项目目录> --kind video --path final/video.mp4
+python scripts/project_state.py status --project <项目目录> --scope full --require-ready
+```
+
+替换成片、时序或配乐后，旧检查报告无法继续通过验收。实际逐帧、知识和手机可读性检查仍须完成后记录；状态文件不产生用户授权，也不代替视觉判断。对CSS/JS或插图的修改仍需重新导出并检查受影响部分。
+
+## 运行测试
+
+```text
+python -m unittest discover -s tests -v
+```
+
+测试仅在临时项目里创建合成音视频，不使用个人素材。FFmpeg、Node在PATH中时会自动启用相应检查，也可通过VIBE_FFMPEG、VIBE_NODE指定可执行文件；可选VIBE_GSAP指向真实GSAP的CommonJS模块执行时间线回归。没有FFmpeg/Node时，相应测试明确显示为跳过，不能据此宣称完整媒体验证已经通过。
 
 脚本已使用隔离的合成音频、测试视频和真实GSAP时间线验证，包括错误帧数与80ms音轨偏移的检出。仍需对实际成片逐镜检查、核对知识事实与封面文字。
 
