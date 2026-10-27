@@ -1,0 +1,11 @@
+{
+  "series": "Vibe知识大赏",
+  "language": "zh-CN",
+  "video": {"width": 1920, "height": 1080, "fps": 30, "preferredDurationRange": [30, 45], "engine": "hyperframes", "renderEnvironment": "local"},
+  "audio": {"additionalNarration": false, "preserveMusicSpeed": true},
+  "typography": {"headlinePx": 112, "captionPx": 52, "diagramLabelMinPx": 44, "safeMarginPx": 64},
+  "covers": [{"name": "horizontal", "ratio": [4, 3]}, {"name": "vertical", "ratio": [3, 4]}],
+  "titlePrefix": "Vibe知识大赏｜",
+  "paletteSuggestion": {"background": "#081118", "accent": "#71e1c4", "secondary": "#ffb777"},
+  "deliverables": ["video.mp4", "covers", "publish.md", "sources.md", "editable-project", "verification"]
+}
